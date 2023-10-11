@@ -33,6 +33,14 @@ dampeningSlider.oninput = function () {
     collisionDampening = 1 - this.value / 100;
 }
 
+var pullFactorSpan = document.getElementById("pullFactorSpan");
+var pullFactorSlider = document.getElementById("pullFactorSlider");
+
+pullFactorSlider.oninput = function() {
+    pullFactorSpan.innerHTML = this.value / 10;
+    mousePullFactor = this.value / 10;
+}
+
 var positionX = 200;
 var positionY = 200;
 var speedX = 5;
