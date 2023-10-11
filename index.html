@@ -17,6 +17,11 @@
             width: 100%;
         }
 
+        .top_display{
+            display: flex;
+            height: 5%;
+        }
+
         .control {
             display: flex;
             justify-content: space-between;
@@ -43,6 +48,16 @@
 </head>
 
 <body>
+    <div class="top_display">
+        <div class="panel">
+            <div>X velocity: <span id="X_vel"></span></div>
+            <div>X position: <span id="X_pos"></span></div>
+        </div>
+        <div class="panel">
+            <div>Y velocity: <span id="Y_vel"></span></div>
+            <div>Y position: <span id="Y_pos"></span></div>
+        </div>
+    </div>
     <canvas id="canvas" onmousedown="mouseIsDown = true" onmouseup="mouseIsDown = false" onmousemove="updateMouseCoords(event)">
 
     </canvas>

@@ -1,12 +1,18 @@
 var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 
+var displaySpeedX = document.getElementById("X_vel");
+var displayPositionX = document.getElementById("X_pos");
+var displaySpeedY = document.getElementById("Y_vel");
+var displayPositionY = document.getElementById("Y_pos");
+
 var ballRadiusSlider = document.getElementById("ballRadiusSlider");
 var radiusSpan = document.getElementById("radiusSpan");
 
 ballRadiusSlider.oninput = function () {
     radiusSpan.innerHTML = this.value;
     ballRadius = this.value;
+    console.log(ballRadius, this.value)
 }
 
 var gravitySlider = document.getElementById("gravitySlider");
@@ -49,7 +55,7 @@ var speedY = 7;
 var tailCoords = [[positionX, positionY, tailHue]];
 var tailHue = 0;
 
-var ballRadius = 30;
+var ballRadius = 10;
 var framesPerSecond = 45;
 var acceleration = 1;
 var airResistance = 0.995;
@@ -68,9 +74,7 @@ function updateMouseCoords(event){
 
 
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight * .8;
-
-let canvasElem = document.querySelector("canvas");
+canvas.height = window.innerHeight * .75;
 
 
 function simulate() {
@@ -78,7 +82,7 @@ function simulate() {
     if (mouseIsDown){
         applyMouseForce();
     }
-    
+
     speedY += acceleration;
 
     speedX *= airResistance;
@@ -89,8 +93,17 @@ function simulate() {
 
     handleCollisions();
 
+    updateDisplayValues();
+
     updateTail();
 
+}
+
+function updateDisplayValues(){
+    displayPositionX.innerHTML = Math.round(positionX);
+    displayPositionY.innerHTML = Math.round(positionY);
+    displaySpeedX.innerHTML = Math.round(speedX);
+    displaySpeedY.innerHTML = Math.round(speedY);
 }
 
 function applyMouseForce(){
@@ -103,20 +116,17 @@ function applyMouseForce(){
 }
 
 function handleCollisions(){
-    xCollisionLeft = positionX <= ballRadius;
-    xCollisionRight = positionX >= (canvas.width - ballRadius);
+    xCollisionLeft = positionX < ballRadius;
+    xCollisionRight = positionX > (canvas.width - ballRadius);
 
-    yCollisionTop = positionY <= ballRadius;
-    yCollisionBottom = positionY >= (canvas.height - ballRadius);
+    yCollisionTop = positionY < ballRadius;
+    yCollisionBottom = positionY > (canvas.height - ballRadius);
 
     if (xCollisionLeft || xCollisionRight) {
         speedX *= -1;
         speedX *= collisionDampening;
 
-        console.log("X: " + positionX + "Y: " + positionY);
-
         if (xCollisionLeft) {
-            console.log("HELLO");
             positionX = ballRadius;
         } else if (xCollisionRight) {
             positionX = canvas.width - ballRadius;
