@@ -1,6 +1,9 @@
 var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight * .75;
+
 var displaySpeedX = document.getElementById("X_vel");
 var displayPositionX = document.getElementById("X_pos");
 var displaySpeedY = document.getElementById("Y_vel");
@@ -9,50 +12,24 @@ var displayPositionY = document.getElementById("Y_pos");
 var ballRadiusSlider = document.getElementById("ballRadiusSlider");
 var radiusSpan = document.getElementById("radiusSpan");
 
-ballRadiusSlider.oninput = function () {
-    radiusSpan.innerHTML = this.value;
-    ballRadius = this.value;
-    console.log(ballRadius, this.value)
-}
-
 var gravitySlider = document.getElementById("gravitySlider");
 var gravitySpan = document.getElementById("gravitySpan");
-
-gravitySlider.oninput = function () {
-    gravitySpan.innerHTML = this.value;
-    acceleration = this.value / 100;
-}
 
 var airResistanceSlider = document.getElementById("airResistanceSlider");
 var resistanceSpan = document.getElementById("resistanceSpan");
 
-airResistanceSlider.oninput = function () {
-    resistanceSpan.innerHTML = this.value / 2;
-    airResistance = 1 - this.value / 200;
-}
-
 var dampeningSlider = document.getElementById("dampeningSlider");
 var dampeningSpan = document.getElementById("dampeningSpan");
 
-dampeningSlider.oninput = function () {
-    dampeningSpan.innerHTML = this.value;
-    collisionDampening = 1 - this.value / 100;
-}
-
 var pullFactorSpan = document.getElementById("pullFactorSpan");
 var pullFactorSlider = document.getElementById("pullFactorSlider");
-
-pullFactorSlider.oninput = function() {
-    pullFactorSpan.innerHTML = this.value / 10;
-    mousePullFactor = this.value / 10;
-}
 
 var positionX = 200;
 var positionY = 200;
 var speedX = 5;
 var speedY = 7;
 
-var tailCoords = [[positionX, positionY, tailHue]];
+var tailCoords = [];
 var tailHue = 0;
 
 var ballRadius = 10;
@@ -66,16 +43,36 @@ var mouseX = 0;
 var mouseY = 0;
 var mousePullFactor = 1.5;
 
-function updateMouseCoords(event){
-    let rect = canvas.getBoundingClientRect(); 
-    mouseX = event.clientX - rect.left; 
-    mouseY = event.clientY - rect.top; 
+ballRadiusSlider.oninput = function () {
+    radiusSpan.innerHTML = this.value;
+    ballRadius = this.value;
 }
 
+gravitySlider.oninput = function () {
+    gravitySpan.innerHTML = this.value;
+    acceleration = this.value / 100;
+}
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight * .75;
+airResistanceSlider.oninput = function () {
+    resistanceSpan.innerHTML = this.value / 2;
+    airResistance = 1 - this.value / 200;
+}
 
+dampeningSlider.oninput = function () {
+    dampeningSpan.innerHTML = this.value;
+    collisionDampening = 1 - this.value / 100;
+}
+
+pullFactorSlider.oninput = function () {
+    pullFactorSpan.innerHTML = this.value / 10;
+    mousePullFactor = this.value / 10;
+}
+
+function updateMouseCoords(event) {
+    let rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+}
 
 function simulate() {
     
@@ -127,8 +124,10 @@ function handleCollisions(){
         speedX *= collisionDampening;
 
         if (xCollisionLeft) {
-            positionX = ballRadius;
+            console.log("Left Collision!")
+            positionX = ballRadius + 1;
         } else if (xCollisionRight) {
+            console.log("Right Collision!")
             positionX = canvas.width - ballRadius;
         }
     }
@@ -138,8 +137,10 @@ function handleCollisions(){
         speedY *= collisionDampening;
 
         if (yCollisionTop) {
-            positionY = ballRadius;
+            console.log("Top Collision!")
+            positionY = ballRadius + 1;
         } else if (yCollisionBottom) {
+            console.log("Bottom Collision!")
             positionY = canvas.height - ballRadius;
         }
     }
