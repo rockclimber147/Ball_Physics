@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            padding: 0px !important;
+            margin: 0px !important;
+            box-sizing:border-box;
+        }
+
+        canvas {
+            border: solid black;
+            width: 100%;
+        }
+
+        .control {
+            display: flex;
+            justify-content: space-between;
+            background-color: aquamarine;
+            border: solid black;
+            height: 10%;
+            width: 100%;
+        }
+
+        .slider{
+            width:100%;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" onmousedown="mouseIsDown = true" onmouseup="mouseIsDown = false" onmousemove="updateMouseCoords(event)">
+
+    </canvas>
+    <div class="control">
+        <div>
+            <h3>
+                Ball Radius: <Span id="radiusSpan">30</Span> pixels
+            </h3>
+            <div>
+                <input type="range" min="1" max="100" value="30" class="slider" id="ballRadiusSlider">
+            </div>
+        </div>
+        <div>
+            <h3>
+                Gravity: <Span id="gravitySpan">100</Span>%
+            </h3>
+            <div>
+                <input type="range" min="0" max="500" value="100" class="slider" id="gravitySlider">
+            </div>
+        </div>
+        <div>
+            <h3>
+                Air Resistance: <Span id="resistanceSpan">0.5</Span>%
+            </h3>
+            <div>
+                <input type="range" min="0" max="200" value="1" class="slider" id="airResistanceSlider">
+            </div>
+        </div>
+        <div>
+            <h3>
+                Collision Dampening: <Span id="dampeningSpan">10</Span>%
+            </h3>
+            <div>
+                <input type="range" min="0" max="100" value="10" class="slider" id="dampeningSlider">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+</html>
