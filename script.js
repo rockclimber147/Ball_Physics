@@ -38,8 +38,11 @@ var positionY = 200;
 var speedX = 5;
 var speedY = 7;
 
+var tailCoords = [[positionX, positionY, tailHue]];
+var tailHue = 0;
+
 var ballRadius = 30;
-var framesPerSecond = 60;
+var framesPerSecond = 45;
 var acceleration = 1;
 var airResistance = 0.995;
 var collisionDampening = 0.9;
@@ -47,6 +50,7 @@ var collisionDampening = 0.9;
 var mouseIsDown = false;
 var mouseX = 0;
 var mouseY = 0;
+var mousePullFactor = 1.5;
 
 function updateMouseCoords(event){
     let rect = canvas.getBoundingClientRect(); 
@@ -56,12 +60,34 @@ function updateMouseCoords(event){
 
 
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight * .9;
+canvas.height = window.innerHeight * .8;
 
 let canvasElem = document.querySelector("canvas");
 
 
 function simulate() {
+
+    
+    speedY += acceleration;
+    
+
+    if (mouseIsDown){
+        deltaX = mouseX - positionX;
+        deltaY = mouseY - positionY;
+        distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+
+        speedX += mousePullFactor * deltaX / distance;
+        speedY += mousePullFactor * deltaY / distance;
+    }
+
+    speedX *= airResistance;
+    speedY *= airResistance;
+    positionX = Math.round(positionX);
+    positionY = Math.round(positionY);
+
+    positionY += speedY;
+    positionX += speedX;
+
     xCollisionLeft = positionX <= ballRadius;
     xCollisionRight = positionX >= (canvas.width - ballRadius);
 
@@ -74,10 +100,10 @@ function simulate() {
 
         console.log("X: " + positionX + "Y: " + positionY);
 
-        if (xCollisionLeft){
+        if (xCollisionLeft) {
             console.log("HELLO");
             positionX = ballRadius;
-        } else if (xCollisionRight){
+        } else if (xCollisionRight) {
             positionX = canvas.width - ballRadius;
         }
     }
@@ -86,43 +112,56 @@ function simulate() {
         speedY *= -1;
         speedY *= collisionDampening;
 
-        if (yCollisionTop){
+        if (yCollisionTop) {
             positionY = ballRadius;
-        } else if (yCollisionBottom){
+        } else if (yCollisionBottom) {
             positionY = canvas.height - ballRadius;
         }
     }
-    positionX += speedX;
-    speedY += acceleration;
-    positionY += speedY;
 
-    if (mouseIsDown){
-        deltaX = mouseX - positionX;
-        deltaY = mouseY - positionY;
-        distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+    updateTail();
 
-        speedX += deltaX / distance;
-        speedY += deltaY / distance;
-    }
-
-    speedX *= airResistance;
-    speedY *= airResistance;
-    positionX = Math.round(positionX);
-    positionY = Math.round(positionY);
     console.log("Left: " + xCollisionLeft + " Right: " + xCollisionRight)
 }
 
+function updateTail(){
+    tailCoords.push([positionX, positionY, tailHue]);
+    if (tailCoords.length == 30){
+        tailCoords.shift();
+    }
+}
+
+function drawTail(){
+    for (let i = 0; i < tailCoords.length; i++){
+        drawCircle(tailCoords[i][0], tailCoords[i][1], tailCoords[i][2]);
+    }
+}
+
+function drawCircle(x, y, hue){
+    c.beginPath();
+    c.arc(x, y, ballRadius, 0, 2 * Math.PI);
+    c.fillStyle = "hsl(" + hue + " 100% 50%)";
+    tailHue += 0.25;
+    // tailHue %= 360;
+    c.fill();
+}
+
 function draw() {
+    c.fillStyle = "gray";
+    c.fillRect(0, 0, canvas.width, canvas.height);
+    drawTail();
     c.beginPath();
     c.lineWidth = "5";
     c.arc(positionX, positionY, ballRadius, 0, 2 * Math.PI);
-    c.clearRect(0, 0, canvas.width, canvas.height)
+    c.fillStyle = "white";
     c.stroke();
-    if (mouseIsDown){
-        c.moveTo(positionX,positionY);
-        c.lineTo(mouseX,mouseY);
+    if (mouseIsDown) {
+        c.moveTo(positionX, positionY);
+        c.lineTo(mouseX, mouseY);
         c.stroke();
     }
+    c.fill();
+    // c.stroke();
 }
 
 function tick() {
