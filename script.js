@@ -74,28 +74,35 @@ let canvasElem = document.querySelector("canvas");
 
 
 function simulate() {
-
+    
+    if (mouseIsDown){
+        applyMouseForce();
+    }
     
     speedY += acceleration;
-    
-
-    if (mouseIsDown){
-        deltaX = mouseX - positionX;
-        deltaY = mouseY - positionY;
-        distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
-        speedX += mousePullFactor * deltaX / distance;
-        speedY += mousePullFactor * deltaY / distance;
-    }
 
     speedX *= airResistance;
     speedY *= airResistance;
-    positionX = Math.round(positionX);
-    positionY = Math.round(positionY);
 
     positionY += speedY;
     positionX += speedX;
 
+    handleCollisions();
+
+    updateTail();
+
+}
+
+function applyMouseForce(){
+    deltaX = mouseX - positionX;
+    deltaY = mouseY - positionY;
+    distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+
+    speedX += mousePullFactor * deltaX / distance;
+    speedY += mousePullFactor * deltaY / distance;
+}
+
+function handleCollisions(){
     xCollisionLeft = positionX <= ballRadius;
     xCollisionRight = positionX >= (canvas.width - ballRadius);
 
@@ -126,15 +133,11 @@ function simulate() {
             positionY = canvas.height - ballRadius;
         }
     }
-
-    updateTail();
-
-    console.log("Left: " + xCollisionLeft + " Right: " + xCollisionRight)
 }
 
 function updateTail(){
     tailCoords.push([positionX, positionY, tailHue]);
-    if (tailCoords.length == 30){
+    if (tailCoords.length == 60){
         tailCoords.shift();
     }
 }
