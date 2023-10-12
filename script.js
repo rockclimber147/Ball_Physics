@@ -1,8 +1,12 @@
+// Initialize canvas
+
 var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight * .75;
+
+// Get document elements
 
 var displaySpeedX = document.getElementById("X_vel");
 var displayPositionX = document.getElementById("X_pos");
@@ -24,6 +28,8 @@ var dampeningSpan = document.getElementById("dampeningSpan");
 var pullFactorSpan = document.getElementById("pullFactorSpan");
 var pullFactorSlider = document.getElementById("pullFactorSlider");
 
+// Initialize values
+
 var positionX = 200;
 var positionY = 200;
 var speedX = 5;
@@ -44,6 +50,8 @@ var mouseIsDown = false;
 var mouseX = 0;
 var mouseY = 0;
 var mousePullFactor = 1.5;
+
+// Make methods for all inputs
 
 ballRadiusSlider.oninput = function () {
     radiusSpan.innerHTML = this.value;
@@ -76,23 +84,27 @@ function updateMouseCoords(event) {
     mouseY = event.clientY - rect.top;
 }
 
+// do physics calcs
+
 function simulate() {
     
     if (mouseIsDown){
         applyMouseForce();
     }
 
+    // Modify speeds
+
     speedY += acceleration;
 
     speedX *= airResistance;
     speedY *= airResistance;
 
+    // Update new ball position
+
     positionY += speedY;
     positionX += speedX;
 
     handleCollisions();
-
-    updateDisplayValues();
 
     updateTail();
 
@@ -115,12 +127,14 @@ function applyMouseForce(){
 }
 
 function handleCollisions(){
+    // Collisions happen when didtance from ball to wall is less than the radius of the ball
     xCollisionLeft = positionX < ballRadius;
     xCollisionRight = positionX > (canvas.width - ballRadius);
 
     yCollisionTop = positionY < ballRadius;
     yCollisionBottom = positionY > (canvas.height - ballRadius);
 
+    // collisions reflect the speed
     if (xCollisionLeft || xCollisionRight) {
         speedX *= -1;
         speedX *= collisionDampening;
@@ -160,20 +174,26 @@ function updateTail(){
 function drawTail(){
     for (let i = 0; i < tailCoords.length - 1; i++){
         // draw circles from least recent to most
+
+        // current values
         tailX = tailCoords[i][0];
         tailY = tailCoords[i][1]
         tailHue = tailCoords[i][2]
         tailAlpha = i / tailLength;
 
+        // Get difference of current vs next values
         dTailX = tailCoords[i + 1][0] - tailX;
         dTailY = tailCoords[i + 1][1] - tailY;
         dHue = tailCoords[i + 1][2] - tailHue;
         dTailAlpha = tailAlpha - (i + 1) / tailLength;
         
+        // Calculate step size
         tailXStep = dTailX / (1 + tailInterpolationAmount);
         tailYStep = dTailY / (1 + tailInterpolationAmount);
         hueStep = dHue / (1 + tailInterpolationAmount);
         alphaStep = dTailAlpha / (1 + tailInterpolationAmount);
+
+        // Draw circles for each step
         for (let j = 0; j < 1 + tailInterpolationAmount; j++){
             drawCircle(tailX + j * tailXStep, tailY + j * tailYStep, tailHue + j * hueStep, tailAlpha + j * alphaStep);
         }
@@ -183,28 +203,33 @@ function drawTail(){
 function drawCircle(x, y, hue, alpha){
     c.beginPath();
     c.arc(x, y, ballRadius, 0, 2 * Math.PI);
+    // set circle color
     c.fillStyle = "hsl(" + hue + " 100% 50% / " + alpha + ")";
     tailHue += 0.25;
-    // tailHue %= 360;
     c.fill();
 }
 
 function draw() {
+    updateDisplayValues;
+    // Background
     c.fillStyle = "gray";
     c.fillRect(0, 0, canvas.width, canvas.height);
+    // Rainbow Tail
     drawTail();
+    // draw circle outline
     c.beginPath();
     c.lineWidth = "5";
     c.arc(positionX, positionY, ballRadius, 0, 2 * Math.PI);
     c.fillStyle = "white";
     c.stroke();
+    // draw mouse line
     if (mouseIsDown) {
         c.moveTo(positionX, positionY);
         c.lineTo(mouseX, mouseY);
         c.stroke();
     }
+    // fill circle
     c.fill();
-    // c.stroke();
 }
 
 function tick() {
