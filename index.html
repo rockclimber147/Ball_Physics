@@ -8,7 +8,7 @@
     <style>
         html,
         body {
-            box-sizing:border-box;
+            box-sizing: border-box;
             font-family: monospace;
             background-color: darkgrey;
         }
@@ -18,7 +18,7 @@
             width: 100%;
         }
 
-        .top_display{
+        .top_display {
             display: flex;
             height: 5%;
         }
@@ -33,17 +33,17 @@
         }
 
         .panel {
-            display:flex;
+            display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            width:20%;
+            width: 20%;
             background-color: grey;
             justify-content: center;
             text-align: center;
         }
 
-        .slider{
-            width:90%;
+        .slider {
+            width: 90%;
         }
     </style>
 </head>
@@ -59,7 +59,8 @@
             <div>Y position: <span id="Y_pos"></span></div>
         </div>
     </div>
-    <canvas id="canvas" onmousedown="mouseIsDown = true" onmouseup="mouseIsDown = false" onmousemove="updateMouseCoords(event)">
+    <canvas id="canvas" onmousedown="mouseIsDown = true" onmouseup="mouseIsDown = false"
+        onmousemove="updateMouseCoords(event)">
 
     </canvas>
     <div class="control">

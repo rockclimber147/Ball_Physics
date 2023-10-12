@@ -78,6 +78,7 @@ pullFactorSlider.oninput = function () {
     mousePullFactor = this.value / 10;
 }
 
+// TODO Review why this works, what event is being passed here (it's called from HTML onmousemove)
 function updateMouseCoords(event) {
     let rect = canvas.getBoundingClientRect();
     mouseX = event.clientX - rect.left;
