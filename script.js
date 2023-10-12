@@ -30,9 +30,11 @@ var speedX = 5;
 var speedY = 7;
 
 var tailCoords = [];
+var tailLength = 60;
 var tailHue = 0;
+var tailInterpolationAmount = 4;
 
-var ballRadius = 10;
+var ballRadius = 30;
 var framesPerSecond = 45;
 var acceleration = 1;
 var airResistance = 0.995;
@@ -45,7 +47,7 @@ var mousePullFactor = 1.5;
 
 ballRadiusSlider.oninput = function () {
     radiusSpan.innerHTML = this.value;
-    ballRadius = this.value;
+    ballRadius = parseInt(this.value);
 }
 
 gravitySlider.oninput = function () {
@@ -147,22 +149,41 @@ function handleCollisions(){
 }
 
 function updateTail(){
+    // Add coords to end of list
     tailCoords.push([positionX, positionY, tailHue]);
-    if (tailCoords.length == 60){
+    // Remove from start of list when tail length reached
+    if (tailCoords.length >= tailLength){
         tailCoords.shift();
     }
 }
 
 function drawTail(){
-    for (let i = 0; i < tailCoords.length; i++){
-        drawCircle(tailCoords[i][0], tailCoords[i][1], tailCoords[i][2]);
+    for (let i = 0; i < tailCoords.length - 1; i++){
+        // draw circles from least recent to most
+        tailX = tailCoords[i][0];
+        tailY = tailCoords[i][1]
+        tailHue = tailCoords[i][2]
+        tailAlpha = i / tailLength;
+
+        dTailX = tailCoords[i + 1][0] - tailX;
+        dTailY = tailCoords[i + 1][1] - tailY;
+        dHue = tailCoords[i + 1][2] - tailHue;
+        dTailAlpha = tailAlpha - (i + 1) / tailLength;
+        
+        tailXStep = dTailX / (1 + tailInterpolationAmount);
+        tailYStep = dTailY / (1 + tailInterpolationAmount);
+        hueStep = dHue / (1 + tailInterpolationAmount);
+        alphaStep = dTailAlpha / (1 + tailInterpolationAmount);
+        for (let j = 0; j < 1 + tailInterpolationAmount; j++){
+            drawCircle(tailX + j * tailXStep, tailY + j * tailYStep, tailHue + j * hueStep, tailAlpha + j * alphaStep);
+        }
     }
 }
 
-function drawCircle(x, y, hue){
+function drawCircle(x, y, hue, alpha){
     c.beginPath();
     c.arc(x, y, ballRadius, 0, 2 * Math.PI);
-    c.fillStyle = "hsl(" + hue + " 100% 50%)";
+    c.fillStyle = "hsl(" + hue + " 100% 50% / " + alpha + ")";
     tailHue += 0.25;
     // tailHue %= 360;
     c.fill();
