@@ -211,7 +211,7 @@ function drawCircle(x, y, hue, alpha){
 }
 
 function draw() {
-    updateDisplayValues;
+    updateDisplayValues();
     // Background
     c.fillStyle = "gray";
     c.fillRect(0, 0, canvas.width, canvas.height);
